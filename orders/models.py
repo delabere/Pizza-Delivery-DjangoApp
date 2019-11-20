@@ -3,16 +3,51 @@ from django.db import models
 # abstract away the sizes and toppings and have pizza/subs inherit those like
 # pizza does currently with foodsize
 
-# Create your models here.
+# Create your models here
+# Hierarchy:
+#   Food_Size
+#   PizzaType // SubType
+#   PizzaToppings // SubToppings
+#   Pizza  // Pasta  //  Sub  //  Platter
+
+
 class FoodSize(models.Model):
     size = models.CharField(max_length=65)
 
     def __str__(self):
         return f'{self.size}'
 
+class PizzaType(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class SubType(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
+class PizzaTopping(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class SubTopping(models.Model):
+    name = models.CharField(max_length=65)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 class Pizza(models.Model):
-    pizza_type = models.CharField(max_length=64)
     foodsize = models.ManyToManyField(FoodSize, blank=True, related_name='pizza') 
+    toppings = models.ManyToManyField(PizzaTopping, blank=True, related_name='pizza') 
+    pizza_type = models.ManyToManyField(PizzaType, blank=True, related_name='pizza')
+
 
     def __str__(self):
         return f'{self.foodsize} {self.pizza_type}'
@@ -20,11 +55,12 @@ class Pizza(models.Model):
 
 
 class Sub(models.Model):
-    sub_type = models.CharField(max_length=64)
     foodsize = models.ManyToManyField(FoodSize, blank=True, related_name='sub') 
+    toppings = models.ManyToManyField(PizzaTopping, blank=True, related_name='sub') 
+    sub_type = models.ManyToManyField(SubType, blank=True, related_name='sub')
 
     def __str__(self):
-        return f'{self.sub_type}'
+        return f'{self.foodsize} {self.sub_type}'
 
 
 class Pasta(models.Model):
@@ -40,18 +76,3 @@ class Platter(models.Model):
     def __str__(self):
         return f'{self.platter_type}'
 
-
-class PizzaTopping(models.Model):
-    name = models.CharField(max_length=64)
-    pizzas = models.ManyToManyField(Pizza, blank=True, related_name='topping')
-
-    def __str__(self):
-        return f'{self.name}'
-
-
-class SubTopping(models.Model):
-    name = models.CharField(max_length=65)
-    subs = models.ManyToManyField(Sub, blank=True, related_name='topping')
-
-    def __str__(self):
-        return f'{self.topping}'
