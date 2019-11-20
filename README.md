@@ -1,2 +1,3 @@
-# CS50W_Project3
-Pizza Delivery Restaurant
+# Project 3
+
+Web Programming with Python and JavaScript
