@@ -1,4 +1,7 @@
 from django.db import models
+#TODO: add pricing information to all options somehow
+# abstract away the sizes and toppings and have pizza/subs inherit those like
+# pizza does currently with foodsize
 
 # Create your models here.
 class FoodSize(models.Model):
