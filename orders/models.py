@@ -1,5 +1,5 @@
 from django.db import models
-#TODO: add pricing information to all options somehow
+# TODO: add pricing information to all options somehow
 # abstract away the sizes and toppings and have pizza/subs inherit those like
 # pizza does currently with foodsize
 
@@ -17,17 +17,41 @@ class FoodSize(models.Model):
     def __str__(self):
         return f'{self.size}'
 
+
 class PizzaType(models.Model):
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return f'{self.name}'
 
+
 class SubType(models.Model):
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return f'{self.name}'
+
+
+class PlatterType(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class PastaType(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class SaladType(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f'{self.name}'
+
 
 class PizzaTopping(models.Model):
     name = models.CharField(max_length=64)
@@ -43,36 +67,53 @@ class SubTopping(models.Model):
         return f'{self.name}'
 
 
-class Pizza(models.Model):
-    foodsize = models.ManyToManyField(FoodSize, blank=True, related_name='pizza') 
-    toppings = models.ManyToManyField(PizzaTopping, blank=True, related_name='pizza') 
-    pizza_type = models.ManyToManyField(PizzaType, blank=True, related_name='pizza')
-
-
-    def __str__(self):
-        return f'{self.foodsize} {self.pizza_type}'
-
-
-
-class Sub(models.Model):
-    foodsize = models.ManyToManyField(FoodSize, blank=True, related_name='sub') 
-    toppings = models.ManyToManyField(PizzaTopping, blank=True, related_name='sub') 
-    sub_type = models.ManyToManyField(SubType, blank=True, related_name='sub')
+class PizzaOrder(models.Model):
+    foodsize = models.ForeignKey(
+        FoodSize, on_delete=models.CASCADE, related_name='pizza')
+    toppings = models.ManyToManyField(
+        PizzaTopping, blank=True, related_name='pizza')
+    pizza_type = models.ForeignKey(
+        PizzaType,  on_delete=models.CASCADE, related_name='pizza')
 
     def __str__(self):
-        return f'{self.foodsize} {self.sub_type}'
+        toppings = ", ".join(str(seg) for seg in self.toppings.all())
+        return f'{self.foodsize} {self.pizza_type} with {toppings}'
 
 
-class Pasta(models.Model):
-    pasta = models.CharField(max_length=64)
+class SubOrder(models.Model):
+    foodsize = models.ForeignKey(
+        FoodSize, on_delete=models.CASCADE, related_name='sub')
+    toppings = models.ManyToManyField(
+        SubTopping, blank=True, related_name='sub')
+    sub_type = models.ForeignKey(
+        SubType, on_delete=models.CASCADE, related_name='sub')
 
     def __str__(self):
-        return f'{self.pasta}'
+        toppings = ", ".join(str(seg) for seg in self.toppings.all())
+        return f'{self.foodsize} {self.sub_type} Sub with {toppings}'
 
 
-class Platter(models.Model):
-    platter_type = models.CharField(max_length=64)
+class PlatterOrder(models.Model):
+    platter_type = models.ForeignKey(
+        PlatterType, on_delete=models.CASCADE, related_name='sub')
+    foodsize = models.ForeignKey(
+        FoodSize, on_delete=models.CASCADE, related_name='platter')
 
     def __str__(self):
-        return f'{self.platter_type}'
+        return f'{self.foodsize} {self.platter_type}'
 
+
+class PastaOrder(models.Model):
+    pasta_type = models.ForeignKey(
+        PastaType, on_delete=models.CASCADE, related_name='pasta')
+
+    def __str__(self):
+        return f'{self.pasta_type}'
+
+
+class SaladOrder(models.Model):
+    salad_type = models.ForeignKey(
+        SaladType, on_delete=models.CASCADE, related_name='salad')
+
+    def __str__(self):
+        return f'{self.salad_type}'
