@@ -74,6 +74,7 @@ class PizzaOrder(models.Model):
         PizzaTopping, blank=True, related_name='pizza')
     pizza_type = models.ForeignKey(
         PizzaType,  on_delete=models.CASCADE, related_name='pizza')
+    user = models.CharField(max_length=65)
 
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
@@ -87,6 +88,7 @@ class SubOrder(models.Model):
         SubTopping, blank=True, related_name='sub')
     sub_type = models.ForeignKey(
         SubType, on_delete=models.CASCADE, related_name='sub')
+    user = models.CharField(max_length=65)
 
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
@@ -98,6 +100,7 @@ class PlatterOrder(models.Model):
         PlatterType, on_delete=models.CASCADE, related_name='sub')
     foodsize = models.ForeignKey(
         FoodSize, on_delete=models.CASCADE, related_name='platter')
+    user = models.CharField(max_length=65)
 
     def __str__(self):
         return f'{self.foodsize} {self.platter_type}'
@@ -106,6 +109,7 @@ class PlatterOrder(models.Model):
 class PastaOrder(models.Model):
     pasta_type = models.ForeignKey(
         PastaType, on_delete=models.CASCADE, related_name='pasta')
+    user = models.CharField(max_length=65)
 
     def __str__(self):
         return f'{self.pasta_type}'
@@ -114,6 +118,23 @@ class PastaOrder(models.Model):
 class SaladOrder(models.Model):
     salad_type = models.ForeignKey(
         SaladType, on_delete=models.CASCADE, related_name='salad')
+    user = models.CharField(max_length=65)
 
     def __str__(self):
         return f'{self.salad_type}'
+
+class Price(models.Model):
+    menu_item = models.CharField(max_length=65)
+    food_type = models.CharField(max_length=65, choices=[
+        ('Pizza', 'Pizza'),
+        ('Pasta', 'Pasta'),
+        ('Salad', 'Salad'),
+        ('Platter', 'Platter'),
+        ('Sub', 'Sub')
+    ])
+    small = models.DecimalField(max_digits=10, decimal_places=2)
+    large = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+
+        return f'{self.menu_item}'
