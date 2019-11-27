@@ -90,9 +90,30 @@ class SubOrder(models.Model):
         SubType, on_delete=models.CASCADE, related_name='sub')
     user = models.CharField(max_length=65)
 
+    @property
+    def get_price(self):
+        # query toppings
+        toppings = [top.name for top in self.toppings.all()]
+        topping_price = sum([Price.objects.get(menu_item=topping, food_type='Topping').small for topping in toppings])
+        print(topping_price)
+
+        if self.foodsize.size == 'Small':
+            base_price = Price.objects.get(
+                menu_item=self.sub_type, food_type='Sub').small
+        elif self.foodsize.size == 'Large':
+            base_price = Price.objects.get(
+                menu_item=self.sub_type, food_type='Sub').large
+        else:
+            price = 'none'
+        print(base_price)
+        if toppings:
+            return base_price + topping_price
+        else:
+            return base_price
+
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
-        return f'{self.foodsize} {self.sub_type} Sub with {toppings}'
+        return f'{self.foodsize} {self.sub_type} Sub with {toppings} Price: {self.get_price}'
 
 
 class PlatterOrder(models.Model):
@@ -102,8 +123,21 @@ class PlatterOrder(models.Model):
         FoodSize, on_delete=models.CASCADE, related_name='platter')
     user = models.CharField(max_length=65)
 
+    @property
+    def get_price(self):
+        print(self.foodsize.size)
+        if self.foodsize.size == 'Small':
+            price = Price.objects.get(
+                menu_item=self.platter_type, food_type='Platter').small
+        elif self.foodsize.size == 'Large':
+            price = Price.objects.get(
+                menu_item=self.platter_type, food_type='Platter').large
+        else:
+            price = 'none'
+        return price
+
     def __str__(self):
-        return f'{self.foodsize} {self.platter_type}'
+        return f'{self.foodsize} {self.platter_type} Price: {self.get_price}'
 
 
 class PastaOrder(models.Model):
@@ -111,17 +145,15 @@ class PastaOrder(models.Model):
         PastaType, on_delete=models.CASCADE, related_name='pasta')
     user = models.CharField(max_length=65)
 
+    @property
+    def get_price(self):
+        price = Price.objects.get(
+            menu_item=self.pasta_type, food_type='Pasta').small
+        return price
+
     def __str__(self):
         return f'{self.pasta_type}'
 
-
-class SaladOrder(models.Model):
-    salad_type = models.ForeignKey(
-        SaladType, on_delete=models.CASCADE, related_name='salad')
-    user = models.CharField(max_length=65)
-
-    def __str__(self):
-        return f'{self.salad_type}'
 
 class Price(models.Model):
     menu_item = models.CharField(max_length=65)
@@ -130,11 +162,26 @@ class Price(models.Model):
         ('Pasta', 'Pasta'),
         ('Salad', 'Salad'),
         ('Platter', 'Platter'),
-        ('Sub', 'Sub')
+        ('Sub', 'Sub'),
+        ('Topping', 'Topping')
     ])
     small = models.DecimalField(max_digits=10, decimal_places=2)
     large = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-
         return f'{self.menu_item}'
+
+
+class SaladOrder(models.Model):
+    salad_type = models.ForeignKey(
+        SaladType, on_delete=models.CASCADE, related_name='salad')
+    user = models.CharField(max_length=65)
+
+    @property
+    def get_price(self):
+        price = Price.objects.get(
+            menu_item=self.salad_type, food_type='Salad').small
+        return price
+
+    def __str__(self):
+        return f'{self.salad_type} Price:{self.get_price}'
