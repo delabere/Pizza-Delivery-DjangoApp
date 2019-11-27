@@ -13,6 +13,8 @@ def index(request):
     context = {
         "user": request.user
     }
+    if User.objects.get(username=request.user).is_staff:
+        return render(request, "orders/admin.html", context) #TODO: route the user to the home pizza page if user or admin page if admin
     return render(request, "orders/user.html", context) #TODO: route the user to the home pizza page if user or admin page if admin
 
 
