@@ -67,6 +67,6 @@ def register_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "orders/register.html", {"message": "Invalid credentials."})
+            return render(request, "orders/fancy_register.html", {"message": "Invalid credentials."})
 
-    return render(request, "orders/register.html", {"message": None})
+    return render(request, "orders/fancy_register.html", {"message": None})
