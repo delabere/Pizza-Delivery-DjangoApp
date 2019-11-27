@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 # TODO: add pricing information to all options somehow
 # abstract away the sizes and toppings and have pizza/subs inherit those like
 # pizza does currently with foodsize
@@ -76,9 +77,25 @@ class PizzaOrder(models.Model):
         PizzaType,  on_delete=models.CASCADE, related_name='pizza')
     user = models.CharField(max_length=65)
 
+    @property
+    def get_price(self):
+        topping_count = self.toppings.count()
+        if topping_count > 3:
+            raise ValidationError("You can't assign more than three regions")
+
+        if self.foodsize.size == 'Small':
+            price = Price.objects.get(
+                menu_item=f'{self.pizza_type} Pizza {topping_count} Topping', food_type='Pizza').small
+        elif self.foodsize.size == 'Large':
+            price = Price.objects.get(
+                menu_item=f'{self.pizza_type} Pizza {topping_count} Topping', food_type='Pizza').large
+        else:
+            price = 'none'
+        return price
+
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
-        return f'{self.foodsize} {self.pizza_type} with {toppings}'
+        return f'{self.foodsize} {self.pizza_type} with {toppings} Price: {self.get_price}'
 
 
 class SubOrder(models.Model):
@@ -95,7 +112,6 @@ class SubOrder(models.Model):
         # query toppings
         toppings = [top.name for top in self.toppings.all()]
         topping_price = sum([Price.objects.get(menu_item=topping, food_type='Topping').small for topping in toppings])
-        print(topping_price)
 
         if self.foodsize.size == 'Small':
             base_price = Price.objects.get(
