@@ -111,7 +111,8 @@ class SubOrder(models.Model):
     def get_price(self):
         # query toppings
         toppings = [top.name for top in self.toppings.all()]
-        topping_price = sum([Price.objects.get(menu_item=topping, food_type='Topping').small for topping in toppings])
+        topping_price = sum([Price.objects.get(
+            menu_item=topping, food_type='Topping').small for topping in toppings])
 
         if self.foodsize.size == 'Small':
             base_price = Price.objects.get(
