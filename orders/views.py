@@ -13,7 +13,7 @@ def index(request):
     context = {
         "user": request.user
     }
-    return render(request, "orders/user.html", context)
+    return render(request, "orders/user.html", context) #TODO: route the user to the home pizza page if user or admin page if admin
 
 
 def login_view(request):
@@ -24,23 +24,13 @@ def login_view(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "orders/login.html", {"message": "Invalid credentials."})
-
-
-def fancy_login_view(request):
-    username=request.POST["username"]
-    password=request.POST["password"]
-    user=authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
         return render(request, "orders/fancy_login.html", {"message": "Invalid credentials."})
+
 
 
 def logout_view(request):
     logout(request)
-    return render(request, "orders/login.html", {"message": "Logged out."})
+    return render(request, "orders/fancy_login.html", {"message": "Logged out."})
 
 
 def register_view(request):
@@ -55,7 +45,10 @@ def register_view(request):
         last_name=request.POST["last_name"]
         email=request.POST["email"]
 
-
+        # if any of the fields are blank - reregister
+        for val in [username, password, first_name, last_name, email]:
+            if val == '':
+                return render(request, "orders/fancy_register.html", {"message": "fill in all fields"})
 
         user=User.objects.create_user(
             username=username, email=email, password=password, first_name=first_name, last_name=last_name)
