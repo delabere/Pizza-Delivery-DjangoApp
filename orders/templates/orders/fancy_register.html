@@ -22,12 +22,12 @@
 <body>
 	<div class="container h-100">
 		<div class="d-flex justify-content-center h-100">
-			<div class="user_card" style="height:550px">
+			<div class="user_card" style="height:570px">
 				<div class="d-flex justify-content-center">
 					<div class="brand_logo_container">
 
 					{% comment %} TODO: get a circular pizza image here {% endcomment %}
-						<img src="https://cdn.freebiesupply.com/logos/large/2x/pinterest-circle-logo-png-transparent.png" class="brand_logo" alt="Logo">
+						<img src="{% static "orders/pizza_logo.jpg" %}" class="brand_logo" alt="Logo">
 					</div>
 				</div>
 				<div class="d-flex justify-content-center form_container">
@@ -75,6 +75,7 @@
 					</form>
 				</div>
 		
+					 <hk class="d-flex justify-content-center">{{ message }}</hk>
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
 						Already have an account? <a href="{% url 'index' %}" class="ml-2">Sign In</a>

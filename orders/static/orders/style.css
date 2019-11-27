@@ -36,8 +36,8 @@ html {
 .brand_logo {
   height: 150px;
   width: 150px;
-  border-radius: 50%;
-  border: 2px solid white;
+  /* border-radius: 50%; */
+  /* border: 2px solid white; */
 }
 .form_container {
   margin-top: 100px;
