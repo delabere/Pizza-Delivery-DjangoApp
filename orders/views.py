@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from orders.models import Price
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -11,7 +12,8 @@ def index(request):
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
     context = {
-        "user": request.user
+        "user": request.user,
+        "menu": Price.objects.all()
     }
     if User.objects.get(username=request.user).is_staff:
         return render(request, "orders/admin.html", context) #TODO: route the user to the home pizza page if user or admin page if admin
