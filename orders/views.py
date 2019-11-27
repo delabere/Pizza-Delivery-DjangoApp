@@ -5,7 +5,12 @@ from django.urls import reverse
 
 # Create your views here.
 def index(request):
-    return render(request, 'orders/index.html')
+    if not request.user.is_authenticated:
+        return render(request, "orders/login.html", {"message": None})
+    context = {
+        "user": request.user
+    }
+    return render(request, "orders/user.html", context)
 
 
 def login_view(request):
