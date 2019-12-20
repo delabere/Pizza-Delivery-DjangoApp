@@ -1,6 +1,8 @@
 
 
-{% block body %}
+{% extends 'orders/base.html' %}
+
+{% block content %}
 <h1>Hello admin, {{ user.first_name }}</h1>
 <ul>
     <li>Currently logged in as: {{ user.username }}</li>
