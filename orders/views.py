@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from orders.models import Price
+from orders.models import Price, PizzaTopping, SubTopping
 
 # Create your views here.
 
@@ -15,13 +15,14 @@ def index(request):
         "user": request.user,
         # "menu": Price.objects.all(),
         "menu" : {
-        'pizzas' : [i for i in Price.objects.all() if i.food_type == 'Pizza'],
-        'pastas' : [i for i in Price.objects.all() if i.food_type == 'Pasta'],
-        'salads' : [i for i in Price.objects.all() if i.food_type == 'Salad'],
-        'platters' : [i for i in Price.objects.all() if i.food_type == 'Platter'],
-        'subs' : [i for i in Price.objects.all() if i.food_type == 'Sub'],
-        'toppings' : [i for i in Price.objects.all() if i.food_type == 'Topping']
-        }
+        'pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
+        'pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
+        'salads' : [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
+        'platters' : [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
+        'subs' : [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
+        },
+        "pizza_toppings" : PizzaTopping.objects.all(),
+        "sub_toppings" : SubTopping.objects.all(),
     }
     if User.objects.get(username=request.user).is_staff:
         return render(request, "orders/admin.html", context)

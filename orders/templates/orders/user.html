@@ -7,7 +7,6 @@
 
 <h1>On todays menu...</h1>
 
-
 {% for food_type, items in menu.items %}
 
 <div class="container-flex">
@@ -32,11 +31,79 @@
               <form>
                 <div class="form-row align-items-center">
                   <div class="col-auto my-1">
-                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                    {% if '1 Topping' in item %}
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
                       <option selected>Size...</option>
                       <option value="1">Small</option>
                       <option value="2">Large</option>
                     </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    {% elif '2 Topping' in item %}
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Size...</option>
+                      <option value="1">Small</option>
+                      <option value="2">Large</option>
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    {% elif '3 Topping' in item %}
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Size...</option>
+                      <option value="1">Small</option>
+                      <option value="2">Large</option>
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in pizza_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    {% elif 'subs' in food_type %}
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Size...</option>
+                      <option value="1">Small</option>
+                      <option value="2">Large</option>
+                    </select>
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Topping...</option>
+                      {% for topping in sub_toppings %}
+                        <option value="{{ topping }}">{{ topping }}</option>
+                      {% endfor %}
+                    </select>
+                    {% else %}
+                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Size...</option>
+                      <option value="1">Small</option>
+                      <option value="2">Large</option>
+                    </select>
+                    {% endif %}
                   </div>
                   <div class="col-auto my-1">
                     <button type="submit" class="btn btn-primary">Submit</button>
