@@ -13,7 +13,15 @@ def index(request):
         return render(request, "orders/fancy_login.html", {"message": None})
     context = {
         "user": request.user,
-        "menu": Price.objects.all()
+        # "menu": Price.objects.all(),
+        "menu" : {
+        'pizzas' : [i for i in Price.objects.all() if i.food_type == 'Pizza'],
+        'pastas' : [i for i in Price.objects.all() if i.food_type == 'Pasta'],
+        'salads' : [i for i in Price.objects.all() if i.food_type == 'Salad'],
+        'platters' : [i for i in Price.objects.all() if i.food_type == 'Platter'],
+        'subs' : [i for i in Price.objects.all() if i.food_type == 'Sub'],
+        'toppings' : [i for i in Price.objects.all() if i.food_type == 'Topping']
+        }
     }
     if User.objects.get(username=request.user).is_staff:
         return render(request, "orders/admin.html", context)

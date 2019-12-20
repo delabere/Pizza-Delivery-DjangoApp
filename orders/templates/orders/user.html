@@ -7,28 +7,42 @@
 
 <h1>On todays menu...</h1>
 
+
+{% for food_type, items in menu.items %}
+
 <div class="container-flex">
+  <h1>{{ food_type }}</h1>
   <div class="row">
     <div class="col-1">
-      
     </div>
     <div class="col-4">
       <div id="accordion">
-        {% for item in menu %}
+        {% for item in items %}
         <div class="card">
-          <div class="card-header" id="{{ item }}">
+          <div class="card-header" id="{{ food_type }}{{ item }}">
             <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ item }}" aria-expanded="false" aria-controls="collapse{{ item }}">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ food_type }}{{ item }}" aria-expanded="false" aria-controls="collapse{{ food_type }}{{ item }}">
                 {{ item }}
               </button>
             </h5>
           </div>
 
-          <div id="collapse{{ item }}" class="collapse" aria-labelledby="{{ item }}" data-parent="#accordion">
+          <div id="collapse{{ food_type }}{{ item }}" class="collapse" aria-labelledby="{{ item }}" data-parent="#accordion">
             <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird
-              on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim
-              aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              <form>
+                <div class="form-row align-items-center">
+                  <div class="col-auto my-1">
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                      <option selected>Size...</option>
+                      <option value="1">Small</option>
+                      <option value="2">Large</option>
+                    </select>
+                  </div>
+                  <div class="col-auto my-1">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -42,5 +56,5 @@
     </div>
   </div>
 </div>
-
+{% endfor %}
 {% endblock %}
