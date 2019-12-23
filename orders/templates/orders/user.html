@@ -119,7 +119,9 @@
     <div class="col-2">
     </div>
     <div class="col-5">
-    <h1>This is where the basket will go</h1>
+    {% if forloop.first %}
+      <h1>This is where the basket will go</h1>
+    {% endif %}
     </div>
   </div>
 </div>
