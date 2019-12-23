@@ -101,13 +101,13 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        if username in session_data:
-            request.session.orders_all = session_data[str(request.user)]
-            print('user exists', session_data)
-            print(request.session.orders_all)
-        else:
-            session_data[str(request.user)] = []
-            print('no user', session_data)
+        # if username in session_data:
+        #     request.session.orders_all = session_data[str(request.user)]
+        #     print('user exists', session_data)
+        #     print(request.session.orders_all)
+        # else:
+        #     session_data[str(request.user)] = []
+        #     print('no user', session_data)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "orders/fancy_login.html", {"message": "Invalid credentials."})
