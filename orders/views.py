@@ -15,12 +15,12 @@ def index(request):
         "user": request.user,
         # "menu": Price.objects.all(),
         "menu" : {
-        'pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
-        'pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
-        'salads' : [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
-        'platters' : [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
-        'subs' : [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
-        },
+            'pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
+            'pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
+            'salads' : [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
+            'platters' : [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
+            'subs' : [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
+            },
         "pizza_toppings" : PizzaTopping.objects.all(),
         "sub_toppings" : SubTopping.objects.all(),
     }
