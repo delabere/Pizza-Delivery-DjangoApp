@@ -81,7 +81,7 @@ class PizzaOrder(models.Model):
     def get_price(self):
         topping_count = self.toppings.count()
         if topping_count > 3:
-            raise ValidationError("You can't assign more than three regions")
+            raise ValidationError("You can't select more than three toppings")
 
         if self.foodsize.size == 'Small':
             price = Price.objects.get(

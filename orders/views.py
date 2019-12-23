@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from orders.models import Price, PizzaTopping, SubTopping, FoodSize
+from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType
 
 # Create your views here.
 
@@ -13,7 +13,11 @@ def index(request):
         request.session['order'] = request.POST
         if request.session['order']['food_type'] == 'pizzas':
             size = FoodSize(size=request.session['order']['size'])
-            #  = FoodSize(size=request.session['order']['size'])
+            
+            if 'Regular' in request.session['order']['food_item']:
+                pizza_type  = PizzaType(name='Regular')
+            if 'Sicilian' in request.session['order']['food_item']:
+                pizza_type  = PizzaType(name='Sicilian')
 
 
         print(request.session['order'])
