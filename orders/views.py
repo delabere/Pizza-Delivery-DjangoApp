@@ -3,17 +3,28 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from orders.models import Price, PizzaTopping, SubTopping
+from orders.models import Price, PizzaTopping, SubTopping, FoodSize
 
 # Create your views here.
 
-
 def index(request):
+    if request.method == 'POST':
+        # create order object for item
+        request.session['order'] = request.POST
+        if request.session['order']['food_type'] == 'pizzas':
+            size = FoodSize(size=request.session['order']['size'])
+            #  = FoodSize(size=request.session['order']['size'])
+
+
+        print(request.session['order'])
+
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
+    if not hasattr(request.session, 'order'):
+        request.session.order = ''
     context = {
         "user": request.user,
-        # "menu": Price.objects.all(),
+        "session": request.session,
         "menu" : {
             'pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
             'pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],

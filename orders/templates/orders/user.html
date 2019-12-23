@@ -4,6 +4,7 @@
 <h1>Hello, {{ user.first_name }}</h1>
 <ul>
   <li>Currently logged in as: {{ user.username }}</li>
+  <li>Sessions look like: {{ session.order }}</li>
   <li><a href="{% url 'logout' %}">Logout</a></li>
 </ul>
 
@@ -30,80 +31,83 @@
 
           <div id="collapse{{ food_type }}{{ item }}" class="collapse" aria-labelledby="{{ item }}" data-parent="#accordion">
             <div class="card-body">
-              <form>
+              <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="food_type" value="{{ food_type }}">
+              <input type="hidden" name="food_item" value="{{ item }}">
                 <div class="form-row align-items-center">
                   <div class="col-auto my-1">
                     {% if '1 Topping' in item %}
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
-                      <option value="1">Small</option>
-                      <option value="2">Large</option>
+                      <option value="Small">Small</option>
+                      <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     {% elif '2 Topping' in item %}
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
-                      <option value="1">Small</option>
-                      <option value="2">Large</option>
+                      <option value="Small">Small</option>
+                      <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_2">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     {% elif '3 Topping' in item %}
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
-                      <option value="1">Small</option>
-                      <option value="2">Large</option>
+                      <option value="Small">Small</option>
+                      <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_2">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_3">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     {% elif 'subs' in food_type %}
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
-                      <option value="1">Small</option>
-                      <option value="2">Large</option>
+                      <option value="Small">Small</option>
+                      <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
                       <option selected>Topping...</option>
                       {% for topping in sub_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     {% else %}
-                    <select class="mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
-                      <option value="1">Small</option>
-                      <option value="2">Large</option>
+                      <option value="Small">Small</option>
+                      <option value="Large">Large</option>
                     </select>
                     {% endif %}
                   </div>
