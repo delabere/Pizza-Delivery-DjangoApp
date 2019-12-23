@@ -3,38 +3,61 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType
+from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder
 
 # Create your views here.
 
 def index(request):
     if request.method == 'POST':
         # create order object for item
-        request.session['order'] = request.POST
-        if request.session['order']['food_type'] == 'pizzas':
-            size = FoodSize(size=request.session['order']['size'])
+        request.session['orders_item'] = request.POST
+        print(request.session['orders_item'])
+        if 'Pizzas' in request.session['orders_item']['food_type']:
+            order_item = {'food_type': request.session['orders_item']['food_type'],
+                        'item_type': request.session['orders_item']['food_item'].split()[0],
+                        'size': request.session['orders_item']['size'],
+                        'toppings': request.session['orders_item'].getlist('topping'),
+            }
+            print(order_item)
+        elif 'Subs' in request.session['orders_item']['food_type']:
+            order_item = {'food_type': request.session['orders_item']['food_type'],
+                        'item_type': request.session['orders_item']['food_item'],
+                        'size': request.session['orders_item']['size'],
+                        'toppings': request.session['orders_item'].getlist('topping'),
+            }
+            print(order_item)
+        
+        request.session['orders_all'].append(order_item)
+        print(request.session['orders_all'])
+
+
+
+        # if request.session['orders_item']['food_type'] == 'pizzas':
+        #     size = FoodSize.objects.filter(size=order['size']).first()
             
-            if 'Regular' in request.session['order']['food_item']:
-                pizza_type  = PizzaType(name='Regular')
-            if 'Sicilian' in request.session['order']['food_item']:
-                pizza_type  = PizzaType(name='Sicilian')
+        #     if 'Regular' in request.session['order']['food_item']:
+        #         pizza_type  = PizzaType(name='Regular')
+        #     if 'Sicilian' in request.session['order']['food_item']:
+        #         pizza_type  = PizzaType(name='Sicilian')
 
-
-        print(request.session['order'])
+        # print(request.session['order'])
 
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
-    if not hasattr(request.session, 'order'):
-        request.session.order = ''
+    # if not hasattr(request.session, 'orders_item'):
+    #     request.session['orders_item'] = ''
+    # if not hasattr(request.session, 'orders_all'):
+    #     request.session['orders_all'] = []
+
     context = {
         "user": request.user,
         "session": request.session,
         "menu" : {
-            'pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
-            'pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
-            'salads' : [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
-            'platters' : [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
-            'subs' : [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
+            'Pizzas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
+            'Pastas' : [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
+            'Salads' : [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
+            'Platters' : [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
+            'Subs' : [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
             },
         "pizza_toppings" : PizzaTopping.objects.all(),
         "sub_toppings" : SubTopping.objects.all(),

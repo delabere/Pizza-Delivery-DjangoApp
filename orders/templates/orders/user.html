@@ -4,7 +4,12 @@
 <h1>Hello, {{ user.first_name }}</h1>
 <ul>
   <li>Currently logged in as: {{ user.username }}</li>
-  <li>Sessions look like: {{ session.order }}</li>
+  <li>Sessions look like: {{ session.orders_item }}</li>
+ <ul>
+  {% for order in session.orders_all  %}
+    <li>{{order}}</li>
+  {% endfor %}
+ </ul>
   <li><a href="{% url 'logout' %}">Logout</a></li>
 </ul>
 
@@ -43,7 +48,7 @@
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
@@ -55,13 +60,13 @@
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_2">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
@@ -73,31 +78,31 @@
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_2">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_3">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
-                    {% elif 'subs' in food_type %}
+                    {% elif 'Subs' in food_type %}
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                       <option selected>Size...</option>
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
-                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping_1">
+                    <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
                       <option selected>Topping...</option>
                       {% for topping in sub_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
