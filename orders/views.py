@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder
+from django.db.models import Q
 
 # Create your views here.
 
@@ -17,21 +18,33 @@ def index(request):
                         'item_type': request.session['orders_item']['food_item'].split()[0],
                         'size': request.session['orders_item']['size'],
                         'toppings': request.session['orders_item'].getlist('topping'),
+                        'joined_toppings': ', '.join(request.session['orders_item'].getlist('topping')),
             }
-            print(order_item)
         elif 'Subs' in request.session['orders_item']['food_type']:
             order_item = {'food_type': request.session['orders_item']['food_type'],
                         'item_type': request.session['orders_item']['food_item'],
                         'size': request.session['orders_item']['size'],
                         'toppings': request.session['orders_item'].getlist('topping'),
+                        'joined_toppings': ', '.join(request.session['orders_item'].getlist('topping')),
             }
-            print(order_item)
-        
+        else:
+            order_item = {'food_type': request.session['orders_item']['food_type'],
+                        'item_type': request.session['orders_item']['food_item'],
+                        'size': request.session['orders_item']['size'],
+            }
+        print(order_item)
         request.session['orders_all'].append(order_item)
         print(request.session['orders_all'])
 
 
 
+        # size = FoodSize.objects.filter(size=order_item['size']).first()
+        # pt = PizzaType.objects.filter(name=order_item['item_type']).first()
+        # toppings = PizzaTopping.objects.filter(name__in=order_item['toppings'])
+        # p = PizzaOrder(foodsize=size, pizza_type=pt)
+        # p = p.save(commit=False)
+        # p.toppings.set(toppings)
+        # print(p)
         # if request.session['orders_item']['food_type'] == 'pizzas':
         #     size = FoodSize.objects.filter(size=order['size']).first()
             

@@ -142,10 +142,13 @@
               <p class="card-text">
               <ul class="list-group">
                 <li class="list-group-item active">Items:</li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-                <li class="list-group-item">Morbi leo risus</li>
-                <li class="list-group-item">Porta ac consectetur ac</li>
-                <li class="list-group-item">Vestibulum at eros</li>
+                {% for order in session.orders_all %}
+                  {% if order.toppings|length == 0 %}
+                    <li class="list-group-item">{{ order.food_type }}: {{ order.size }} {{ order.item_type }}</li>
+                    {% else %}
+                    <li class="list-group-item">{{ order.food_type }}: {{ order.size }} {{ order.item_type }} with {{ order.joined_toppings }}</li>
+                  {% endif %}
+                {% endfor %}
               </ul>
               </p>
               <button type="button" class="btn btn-primary btn-lg btn-block">Checkout</button>
