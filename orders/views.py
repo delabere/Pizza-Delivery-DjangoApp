@@ -5,6 +5,11 @@ from django.shortcuts import render
 from django.urls import reverse
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder
 from django.db.models import Q
+# from django.contrib.sessions.models import Session
+
+from functools import wraps
+
+session_data = {}
 
 # Create your views here.
 
@@ -12,6 +17,7 @@ def index(request):
     if request.method == 'POST':
         # create order object for item
         request.session['orders_item'] = request.POST
+        
         print(request.session['orders_item'])
         if 'Pizzas' in request.session['orders_item']['food_type']:
             order_item = {'food_type': request.session['orders_item']['food_type'],
@@ -34,8 +40,13 @@ def index(request):
             }
         print(order_item)
         request.session['orders_all'].append(order_item)
+        if 'save' in request.session:
+            request.session['save'] += 1
+        else:
+            request.session['save'] = 1
         print(request.session['orders_all'])
 
+        
 
 
         # size = FoodSize.objects.filter(size=order_item['size']).first()
@@ -57,10 +68,14 @@ def index(request):
 
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
-    # if not hasattr(request.session, 'orders_item'):
-    #     request.session['orders_item'] = ''
-    # if not hasattr(request.session, 'orders_all'):
+    if not 'orders_item' in request.session:
+        request.session['orders_item'] = ''
+    # if not 'orders_all' in request.session:
     #     request.session['orders_all'] = []
+    if not 'orders_all' in request.session:
+        if not str(request.user) in session_data:
+            session_data[str(request.user)] = []
+        request.session['orders_all'] = session_data[str(request.user)]
 
     context = {
         "user": request.user,
@@ -86,12 +101,20 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
+        if username in session_data:
+            request.session.orders_all = session_data[str(request.user)]
+            print('user exists', session_data)
+            print(request.session.orders_all)
+        else:
+            session_data[str(request.user)] = []
+            print('no user', session_data)
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "orders/fancy_login.html", {"message": "Invalid credentials."})
 
-
 def logout_view(request):
+    session_data[str(request.user)] = request.session['orders_all']
+    print(session_data)
     logout(request)
     return render(request, "orders/fancy_login.html", {"message": "Logged out."})
 
