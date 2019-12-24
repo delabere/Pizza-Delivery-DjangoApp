@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder, SubOrder, SubType, PastaOrder, PastaType, PlatterOrder, PlatterType, SaladOrder, SaladType
-from django.db.models import Q
+from django.db import IntegrityError
 # from django.contrib.sessions.models import Session
 
 from functools import wraps
@@ -18,8 +18,21 @@ session_data = {}
 #    ...:                 'size': 'Small',
 #    ...:                 'topping': ['Sausage', 'Ham']}
 
-# def make_order(request):
-    
+
+def checkout_view(request):
+    models = [PizzaOrder,
+              SubOrder,
+              PastaOrder,
+              SaladOrder,
+              PlatterOrder
+              ]
+
+    for model in models:
+        for item in model.objects.filter(user=request.user.username, status='Draft').all():
+            item.status = 'Ordered'
+            item.save()
+
+    return HttpResponseRedirect(reverse("index"))
 
 
 # TODO: add docstrings to all methods
@@ -32,11 +45,14 @@ def index(request):
 
         if 'Pizzas' in order_data['food_type']:
             size = FoodSize.objects.filter(size=order_data['size']).first()
-            pizza_type = PizzaType.objects.filter(name=order_data['food_item'].split()[0]).first()
-            pizza = PizzaOrder(foodsize=size, pizza_type=pizza_type, user=request.user.username, status='Draft')
+            pizza_type = PizzaType.objects.filter(
+                name=order_data['food_item'].split()[0]).first()
+            pizza = PizzaOrder(foodsize=size, pizza_type=pizza_type,
+                               user=request.user.username, status='Draft')
             pizza.save()
             if 'topping' in order_data:
-                toppings = PizzaTopping.objects.filter(name__in=order_data.getlist('topping'))
+                toppings = PizzaTopping.objects.filter(
+                    name__in=order_data.getlist('topping'))
                 pizza.toppings.set(toppings)
             else:
                 pizza.reg_pizza_type = 'Special'
@@ -44,30 +60,39 @@ def index(request):
 
         elif 'Subs' in order_data['food_type']:
             size = FoodSize.objects.filter(size=order_data['size']).first()
-            sub_type = SubType.objects.filter(name=order_data['food_item']).first()
-            sub = SubOrder(foodsize=size, sub_type=sub_type, user=request.user.username, status='Draft')
+            sub_type = SubType.objects.filter(
+                name=order_data['food_item']).first()
+            sub = SubOrder(foodsize=size, sub_type=sub_type,
+                           user=request.user.username, status='Draft')
             sub.save()
             if 'topping' in order_data:
-                toppings = SubTopping.objects.filter(name__in=order_data.getlist('topping'))
+                toppings = SubTopping.objects.filter(
+                    name__in=order_data.getlist('topping'))
                 sub.toppings.set(toppings)
             else:
                 # sub.reg_pizza_type = 'Special'
                 sub.save()
 
         elif 'Pastas' in order_data['food_type']:
-            pasta_type = PastaType.objects.filter(name=order_data['food_item']).first()
-            pasta = PastaOrder(pasta_type=pasta_type, user=request.user.username, status='Draft')
+            pasta_type = PastaType.objects.filter(
+                name=order_data['food_item']).first()
+            pasta = PastaOrder(pasta_type=pasta_type,
+                               user=request.user.username, status='Draft')
             pasta.save()
 
         elif 'Salads' in order_data['food_type']:
-            salad_type = SaladType.objects.filter(name=order_data['food_item']).first()
-            salad = SaladOrder(salad_type=salad_type, user=request.user.username, status='Draft')
+            salad_type = SaladType.objects.filter(
+                name=order_data['food_item']).first()
+            salad = SaladOrder(salad_type=salad_type,
+                               user=request.user.username, status='Draft')
             salad.save()
 
         elif 'Platter' in order_data['food_type']:
             size = FoodSize.objects.filter(size=order_data['size']).first()
-            platter_type = PlatterType.objects.filter(name=order_data['food_item']).first()
-            platter = PlatterOrder(foodsize=size, platter_type=platter_type, user=request.user.username, status='Draft')
+            platter_type = PlatterType.objects.filter(
+                name=order_data['food_item']).first()
+            platter = PlatterOrder(
+                foodsize=size, platter_type=platter_type, user=request.user.username, status='Draft')
             platter.save()
 
     if not request.user.is_authenticated:
@@ -139,8 +164,9 @@ def register_view(request):
         try:
             user = User.objects.create_user(
                 username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-        except:
-            return render(request, "orders/fancy_register.html", {"message": "User already exists."})
+        except IntegrityError:
+            return render(request, "orders/fancy_register.html", {"message":  "This username is taken"})
+
         user.save()
 
         user = authenticate(request, username=username, password=password)

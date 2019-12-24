@@ -4,7 +4,7 @@
 <h1>Hello, {{ user.first_name }}</h1>
 <ul>
   <li>Currently logged in as: {{ user.username }}</li>
-  <li>Sessions look like: {{ session.orders_item }}</li>
+  {% comment %} <li>Sessions look like: {{ session.orders_item }}</li> {% endcomment %}
  <ul>
   {% for key, item in basket.items  %}
     <li>{{key}}: {{item}}</li>
@@ -151,7 +151,37 @@
                 {% endfor %}
               </ul>
               </p>
-              <button type="button" class="btn btn-primary btn-lg btn-block">Checkout</button>
+              <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Checkout
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Submit order...</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        this is where the total for the order and summary will display!
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        
+                        <form method="post" action="{% url 'checkout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Submit order</button>
+
+                        </form>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             </div>
           </div>
