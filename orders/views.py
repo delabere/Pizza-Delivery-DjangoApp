@@ -22,8 +22,7 @@ def checkout_view(request):
             item.save()
 
     return HttpResponseRedirect(reverse("index"))
-
-
+    
 # TODO: add docstrings to all methods
 
 
@@ -94,10 +93,18 @@ def index(request):
         'Salads': list(SaladOrder.objects.filter(user=request.user.username, status='Draft')),
         'Platter': list(PlatterOrder.objects.filter(user=request.user.username, status='Draft'))
     }
+    checkout_data = {
+        'Pizzas': list(PizzaOrder.objects.filter(status='Ordered')),
+        'Subs': list(SubOrder.objects.filter(status='Ordered')),
+        'Pastas': list(PastaOrder.objects.filter(status='Ordered')),
+        'Salads': list(SaladOrder.objects.filter(status='Ordered')),
+        'Platter': list(PlatterOrder.objects.filter(status='Ordered'))
+    }
 
     context = {
         "user": request.user,
         "basket": basket_data,
+        "checkout": checkout_data,
         "menu": {
             'Pizzas': [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
             'Pastas': [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
