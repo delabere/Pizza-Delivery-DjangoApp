@@ -28,37 +28,6 @@ def index(request):
         # create order object for item
         order_data = request.POST
 
-        # remove 'topping...' from toppings
-
-
-        # print(request.session['orders_item'])
-        # if 'Pizzas' in request.session['orders_item']['food_type']:
-        #     order_item = {'food_type': request.session['orders_item']['food_type'],
-        #                 'item_type': request.session['orders_item']['food_item'].split()[0],
-        #                 'size': request.session['orders_item']['size'],
-        #                 'toppings': request.session['orders_item'].getlist('topping'),
-        #                 'joined_toppings': ', '.join(request.session['orders_item'].getlist('topping')),
-        #     }
-        # elif 'Subs' in request.session['orders_item']['food_type']:
-        #     order_item = {'food_type': request.session['orders_item']['food_type'],
-        #                 'item_type': request.session['orders_item']['food_item'],
-        #                 'size': request.session['orders_item']['size'],
-        #                 'toppings': request.session['orders_item'].getlist('topping'),
-        #                 'joined_toppings': ', '.join(request.session['orders_item'].getlist('topping')),
-        #     }
-        # else:
-        #     order_item = {'food_type': request.session['orders_item']['food_type'],
-        #                 'item_type': request.session['orders_item']['food_item'],
-        #                 'size': request.session['orders_item']['size'],
-        #     }
-        # print(order_item)
-        # request.session['orders_all'].append(order_item)
-        # if 'save' in request.session:
-        #     request.session['save'] += 1
-        # else:
-        #     request.session['save'] = 1
-        # print(request.session['orders_all'])
-
         if 'Pizzas' in order_data['food_type']:
             size = FoodSize.objects.filter(size=order_data['size']).first()
             pizza_type = PizzaType.objects.filter(name=order_data['food_item'].split()[0]).first()
@@ -70,7 +39,6 @@ def index(request):
             else:
                 pizza.reg_pizza_type = 'Special'
                 pizza.save()
-
 
         elif 'Subs' in order_data['food_type']:
             size = FoodSize.objects.filter(size=order_data['size']).first()
@@ -100,21 +68,27 @@ def index(request):
             platter = PlatterOrder(foodsize=size, platter_type=platter_type, user=request.user.username, status='Draft')
             platter.save()
 
-
-
-    # TODO: should be wrapped in else block - do at end in case of break
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
-    if not 'orders_item' in request.session:
-        request.session['orders_item'] = ''
-    if not 'orders_all' in request.session:
-        if str(request.user) not in session_data:
-            session_data[str(request.user)] = []
-        request.session['orders_all'] = session_data[str(request.user)]
+    # if not 'orders_item' in request.session:
+    #     request.session['orders_item'] = ''
+    # if not 'orders_all' in request.session:
+    #     if str(request.user) not in session_data:
+    #         session_data[str(request.user)] = []
+    #     request.session['orders_all'] = session_data[str(request.user)]
+
+    basket_data = {
+        'Pizzas': list(PizzaOrder.objects.filter(user=request.user.username, status='Draft')),
+        'Subs': list(SubOrder.objects.filter(user=request.user.username, status='Draft')),
+        'Pastas': list(PastaOrder.objects.filter(user=request.user.username, status='Draft')),
+        'Salads': list(SaladOrder.objects.filter(user=request.user.username, status='Draft')),
+        'Platter': list(PlatterOrder.objects.filter(user=request.user.username, status='Draft'))
+    }
 
     context = {
         "user": request.user,
-        "session": request.session,
+        # "session": request.session,
+        "basket": basket_data,
         "menu": {
             'Pizzas': [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
             'Pastas': [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
@@ -142,8 +116,6 @@ def login_view(request):
 
 
 def logout_view(request):
-    session_data[str(request.user)] = request.session['orders_all']
-    print(session_data)
     logout(request)
     return render(request, "orders/fancy_login.html", {"message": "Logged out."})
 
