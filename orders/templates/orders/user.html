@@ -44,12 +44,13 @@
                   <div class="col-auto my-1">
                     {% if '1 Topping' in item %}
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
-                      <option selected>Size...</option>
+                      <option disabled selected value> -- select a size -- </option>
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      {% comment %}  <option disabled selected value> -- select a topping -- </option>{% endcomment %}
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
@@ -61,13 +62,13 @@
                       <option value="Large">Large</option>
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
@@ -79,19 +80,19 @@
                       <option value="Large">Large</option>
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in pizza_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
@@ -103,7 +104,7 @@
                       <option value="Large">Large</option>
                     </select>
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="topping">
-                      <option selected>Topping...</option>
+                      <option disabled selected value> -- select a topping -- </option>
                       {% for topping in sub_toppings %}
                         <option value="{{ topping }}">{{ topping }}</option>
                       {% endfor %}
