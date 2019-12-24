@@ -18,7 +18,9 @@ session_data = {}
 #    ...:                 'size': 'Small',
 #    ...:                 'topping': ['Sausage', 'Ham']}
 
-# def make_order
+# def make_order(request):
+    
+
 
 # TODO: add docstrings to all methods
 
@@ -134,9 +136,11 @@ def register_view(request):
             if val == '':
                 return render(request, "orders/fancy_register.html", {"message": "fill in all fields"})
 
-        user = User.objects.create_user(
-            username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-
+        try:
+            user = User.objects.create_user(
+                username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+        except:
+            return render(request, "orders/fancy_register.html", {"message": "User already exists."})
         user.save()
 
         user = authenticate(request, username=username, password=password)
