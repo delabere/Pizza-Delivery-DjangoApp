@@ -1,3 +1,4 @@
+# TODO: order imports
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -5,18 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder, SubOrder, SubType, PastaOrder, PastaType, PlatterOrder, PlatterType, SaladOrder, SaladType
 from django.db import IntegrityError
-# from django.contrib.sessions.models import Session
-
 from functools import wraps
-
-session_data = {}
-
-# Create your views here.
-
-# In [6]: order_data = {'food_type': 'Pizzas',
-#    ...:                 'food_item': 'Regular Pizza 2 Topping',
-#    ...:                 'size': 'Small',
-#    ...:                 'topping': ['Sausage', 'Ham']}
 
 
 def checkout_view(request):
@@ -97,12 +87,6 @@ def index(request):
 
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
-    # if not 'orders_item' in request.session:
-    #     request.session['orders_item'] = ''
-    # if not 'orders_all' in request.session:
-    #     if str(request.user) not in session_data:
-    #         session_data[str(request.user)] = []
-    #     request.session['orders_all'] = session_data[str(request.user)]
 
     basket_data = {
         'Pizzas': list(PizzaOrder.objects.filter(user=request.user.username, status='Draft')),
@@ -114,7 +98,6 @@ def index(request):
 
     context = {
         "user": request.user,
-        # "session": request.session,
         "basket": basket_data,
         "menu": {
             'Pizzas': [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
@@ -149,7 +132,6 @@ def logout_view(request):
 
 def register_view(request):
     if request.method == 'POST':
-
         username = request.POST["username"]
         password = request.POST["password"]
         first_name = request.POST["first_name"]
@@ -160,20 +142,16 @@ def register_view(request):
         for val in [username, password, first_name, last_name, email]:
             if val == '':
                 return render(request, "orders/fancy_register.html", {"message": "fill in all fields"})
-
         try:
             user = User.objects.create_user(
                 username=username, email=email, password=password, first_name=first_name, last_name=last_name)
         except IntegrityError:
             return render(request, "orders/fancy_register.html", {"message":  "This username is taken"})
-
         user.save()
-
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "orders/fancy_register.html", {"message": "Invalid credentials."})
-
     return render(request, "orders/fancy_register.html", {"message": None})
