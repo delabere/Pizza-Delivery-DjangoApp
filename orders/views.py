@@ -9,12 +9,18 @@ from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, 
 
 
 def order_status(request):
+    """
+    for user: marks all basket items as 'Ordered'
+    for admin: marks selected order as 'Complete'
+    """
+
     if 'admin_form' in request.POST:
         model = f"{request.POST['food_type'][:-1]}Order"
         model = globals()[model]
 
-        order = model.objects.filter(pk=request.POST['id'])
-        order.delete()
+        order = model.objects.filter(pk=request.POST['id']).first()
+        order.status = 'Complete'
+        order.save()
 
 # TODO: is there a better way to do this?
     models = [PizzaOrder,
@@ -35,6 +41,12 @@ def order_status(request):
 
 
 def index(request):
+    """
+    Main view:
+    If a user is authenticated then this controls menu and ordering.
+    If an admin is authenticated then this controls the showing of orders and marking orders complete
+    """
+
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
 
@@ -62,13 +74,15 @@ def index(request):
         "sub_toppings": SubTopping.objects.all(),
     }
 
+    # redirect depending on admin or user profile
     if User.objects.get(username=request.user).is_staff:
         return render(request, "orders/admin.html", context)
-
-    return render(request, "orders/user.html", context)
+    else:
+        return render(request, "orders/user.html", context)
 
 
 def order_to_basket(order_data, request):
+    """creates a data entry for a customers order which is then displayed in the basket"""
     if 'Pizzas' in order_data['food_type']:
         size = FoodSize.objects.filter(size=order_data['size']).first()
         pizza_type = PizzaType.objects.filter(
@@ -148,6 +162,7 @@ def get_basket_data(request):
 
 
 def login_view(request):
+    """allows a user to log in"""
     username = request.POST["username"]
     password = request.POST["password"]
     user = authenticate(request, username=username, password=password)
@@ -159,11 +174,13 @@ def login_view(request):
 
 
 def logout_view(request):
+    """allows a user to logout"""
     logout(request)
     return render(request, "orders/fancy_login.html", {"message": "Logged out."})
 
 
 def register_view(request):
+    """allows a new user to register their information"""
     if request.method == 'POST':
         username = request.POST["username"]
         password = request.POST["password"]
@@ -181,6 +198,7 @@ def register_view(request):
         except IntegrityError:
             return render(request, "orders/fancy_register.html", {"message":  "This username is taken"})
         user.save()
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
