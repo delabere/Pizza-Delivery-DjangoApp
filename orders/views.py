@@ -8,8 +8,6 @@ from django.db import IntegrityError
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder, SubOrder, SubType, PastaOrder, PastaType, PlatterOrder, PlatterType, SaladOrder, SaladType
 
 
-
-
 def index(request):
     """
     Main view:
