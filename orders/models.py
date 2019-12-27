@@ -73,7 +73,7 @@ class PizzaOrder(models.Model):
         FoodSize, on_delete=models.CASCADE, related_name='pizza')
     toppings = models.ManyToManyField(
         PizzaTopping, blank=True, related_name='pizza')
-    pizza_type = models.ForeignKey(
+    food_type = models.ForeignKey(
         PizzaType,  on_delete=models.CASCADE, related_name='pizza')
     user = models.CharField(max_length=65)
     status = models.CharField(max_length=20, choices=[
@@ -91,23 +91,23 @@ class PizzaOrder(models.Model):
         if topping_count == 0:
             if self.foodsize.size == 'Small':
                 price = Price.objects.get(
-                    menu_item=f'{self.pizza_type} Pizza {self.reg_pizza_type}', food_type='Pizza').small
+                    menu_item=f'{self.food_type} Pizza {self.reg_pizza_type}', food_type='Pizza').small
             elif self.foodsize.size == 'Large':
                 price = Price.objects.get(
-                    menu_item=f'{self.pizza_type} Pizza {self.reg_pizza_type}', food_type='Pizza').large
+                    menu_item=f'{self.food_type} Pizza {self.reg_pizza_type}', food_type='Pizza').large
         elif self.foodsize.size == 'Small':
             price = Price.objects.get(
-                menu_item=f'{self.pizza_type} Pizza {topping_count} Topping', food_type='Pizza').small
+                menu_item=f'{self.food_type} Pizza {topping_count} Topping', food_type='Pizza').small
         elif self.foodsize.size == 'Large':
             price = Price.objects.get(
-                menu_item=f'{self.pizza_type} Pizza {topping_count} Topping', food_type='Pizza').large
+                menu_item=f'{self.food_type} Pizza {topping_count} Topping', food_type='Pizza').large
         else:
             price = 'none'
         return price
 
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
-        return f'{self.foodsize} {self.pizza_type} with {toppings} Price: {self.get_price}'
+        return f'{self.foodsize} {self.food_type} with {toppings} Price: {self.get_price}'
 
 
 class SubOrder(models.Model):
@@ -115,7 +115,7 @@ class SubOrder(models.Model):
         FoodSize, on_delete=models.CASCADE, related_name='sub')
     toppings = models.ManyToManyField(
         SubTopping, blank=True, related_name='sub')
-    sub_type = models.ForeignKey(
+    food_type = models.ForeignKey(
         SubType, on_delete=models.CASCADE, related_name='sub')
     user = models.CharField(max_length=65)
     status = models.CharField(max_length=20, choices=[
@@ -133,10 +133,10 @@ class SubOrder(models.Model):
 
         if self.foodsize.size == 'Small':
             base_price = Price.objects.get(
-                menu_item=self.sub_type, food_type='Sub').small
+                menu_item=self.food_type, food_type='Sub').small
         elif self.foodsize.size == 'Large':
             base_price = Price.objects.get(
-                menu_item=self.sub_type, food_type='Sub').large
+                menu_item=self.food_type, food_type='Sub').large
         else:
             return 'none'
         print(base_price)
@@ -147,11 +147,11 @@ class SubOrder(models.Model):
 
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
-        return f'{self.foodsize} {self.sub_type} Sub with {toppings} Price: {self.get_price}' # TODO: make 'with' dynamic
+        return f'{self.foodsize} {self.food_type} Sub with {toppings} Price: {self.get_price}' # TODO: make 'with' dynamic
 
 
 class PlatterOrder(models.Model):
-    platter_type = models.ForeignKey(
+    food_type = models.ForeignKey(
         PlatterType, on_delete=models.CASCADE, related_name='sub')
     foodsize = models.ForeignKey(
         FoodSize, on_delete=models.CASCADE, related_name='platter')
@@ -167,20 +167,20 @@ class PlatterOrder(models.Model):
         print(self.foodsize.size)
         if self.foodsize.size == 'Small':
             price = Price.objects.get(
-                menu_item=self.platter_type, food_type='Platter').small
+                menu_item=self.food_type, food_type='Platter').small
         elif self.foodsize.size == 'Large':
             price = Price.objects.get(
-                menu_item=self.platter_type, food_type='Platter').large
+                menu_item=self.food_type, food_type='Platter').large
         else:
             price = 'none'
         return price
 
     def __str__(self):
-        return f'{self.foodsize} {self.platter_type} Price: {self.get_price}'
+        return f'{self.foodsize} {self.food_type} Price: {self.get_price}'
 
 
 class PastaOrder(models.Model):
-    pasta_type = models.ForeignKey(
+    food_type = models.ForeignKey(
         PastaType, on_delete=models.CASCADE, related_name='pasta')
     user = models.CharField(max_length=65)
     status = models.CharField(max_length=20, choices=[
@@ -192,15 +192,15 @@ class PastaOrder(models.Model):
     @property
     def get_price(self):
         price = Price.objects.get(
-            menu_item=self.pasta_type, food_type='Pasta').small
+            menu_item=self.food_type, food_type='Pasta').small
         return price
 
     def __str__(self):
-        return f'{self.pasta_type} Price: {self.get_price}'
+        return f'{self.food_type} Price: {self.get_price}'
 
 
 class SaladOrder(models.Model):
-    salad_type = models.ForeignKey(
+    food_type = models.ForeignKey(
         SaladType, on_delete=models.CASCADE, related_name='salad')
     user = models.CharField(max_length=65)
     status = models.CharField(max_length=20, choices=[
@@ -212,11 +212,11 @@ class SaladOrder(models.Model):
     @property
     def get_price(self):
         price = Price.objects.get(
-            menu_item=self.salad_type, food_type='Salad').small
+            menu_item=self.food_type, food_type='Salad').small
         return price
 
     def __str__(self):
-        return f'{self.salad_type} Price: {self.get_price}'
+        return f'{self.food_type} Price: {self.get_price}'
 
 
 

@@ -82,58 +82,88 @@ def index(request):
 
 
 def order_to_basket(order_data, request):
-    """creates a data entry for a customers order which is then displayed in the basket"""
-    if 'Pizzas' in order_data['food_type']:
+    """creates a data entry for a customers order which can then be displayed in the basket"""
+    models = {
+        'Pastas': (PastaType, PastaOrder),
+        'Salads': (SaladType, SaladOrder),
+        'Platters': (PlatterType, PlatterOrder),
+        'Pizzas': (PizzaType, PizzaOrder, PizzaTopping),
+        'Subs': (SubType, SubOrder, SubTopping),
+    }
+
+    # get all the required query data from order
+    food_type = models[order_data['food_type']][0].objects.filter(
+        name=order_data['food_item']).first()
+
+    if order_data['food_type'] in ['Pizzas', 'Subs', 'Platters']:
+        if order_data['food_type'] == 'Pizzas':
+            food_type = PizzaType.objects.filter(
+                name=order_data['food_item'].split()[0]).first()
         size = FoodSize.objects.filter(size=order_data['size']).first()
-        pizza_type = PizzaType.objects.filter(
-            name=order_data['food_item'].split()[0]).first()
-        pizza = PizzaOrder(foodsize=size, pizza_type=pizza_type,
-                           user=request.user.username, status='Draft')
-        pizza.save()
-        if 'topping' in order_data:
-            toppings = PizzaTopping.objects.filter(
-                name__in=order_data.getlist('topping'))
-            pizza.toppings.set(toppings)
-        else:
-            pizza.reg_pizza_type = 'Special'
-            pizza.save()
+        food = models[order_data['food_type']][1](food_type=food_type,
+                            user=request.user.username, status='Draft', foodsize=size)
+    else:
+        food = models[order_data['food_type']][1](food_type=food_type,
+                            user=request.user.username, status='Draft')
 
-    elif 'Subs' in order_data['food_type']:
-        size = FoodSize.objects.filter(size=order_data['size']).first()
-        sub_type = SubType.objects.filter(
-            name=order_data['food_item']).first()
-        sub = SubOrder(foodsize=size, sub_type=sub_type,
-                       user=request.user.username, status='Draft')
-        sub.save()
-        if 'topping' in order_data:
-            toppings = SubTopping.objects.filter(
-                name__in=order_data.getlist('topping'))
-            sub.toppings.set(toppings)
-        else:
-            # sub.reg_pizza_type = 'Special'
-            sub.save()
+    food.save()
 
-    elif 'Pastas' in order_data['food_type']:
-        pasta_type = PastaType.objects.filter(
-            name=order_data['food_item']).first()
-        pasta = PastaOrder(pasta_type=pasta_type,
-                           user=request.user.username, status='Draft')
-        pasta.save()
+    # if pizza or sub then add any toppings
+    if 'topping' in order_data:
+        toppings = models[order_data['food_type']][2].objects.filter(
+            name__in=order_data.getlist('topping'))
+        food.toppings.set(toppings)
+    else:
+        if order_data['food_type'] == 'Pizzas':
+            food.reg_pizza_type = 'Special'
+        food.save()
 
-    elif 'Salads' in order_data['food_type']:
-        salad_type = SaladType.objects.filter(
-            name=order_data['food_item']).first()
-        salad = SaladOrder(salad_type=salad_type,
-                           user=request.user.username, status='Draft')
-        salad.save()
+    print('test')
 
-    elif 'Platter' in order_data['food_type']:
-        size = FoodSize.objects.filter(size=order_data['size']).first()
-        platter_type = PlatterType.objects.filter(
-            name=order_data['food_item']).first()
-        platter = PlatterOrder(
-            foodsize=size, platter_type=platter_type, user=request.user.username, status='Draft')
-        platter.save()
+    # if 'Pizzas' in order_data['food_type']:
+    #     size = FoodSize.objects.filter(size=order_data['size']).first()
+    #     pizza_type = PizzaType.objects.filter(
+    #         name=order_data['food_item'].split()[0]).first()
+    #     pizza = PizzaOrder(foodsize=size, food_type=pizza_type,
+    #                        user=request.user.username, status='Draft')
+    #     pizza.save()
+    #     if 'topping' in order_data:
+    #         toppings = PizzaTopping.objects.filter(
+    #             name__in=order_data.getlist('topping'))
+    #         pizza.toppings.set(toppings)
+    #     else:
+    #         pizza.reg_pizza_type = 'Special'
+    #         pizza.save()
+
+    # elif 'Subs' in order_data['food_type']:
+    #     size = FoodSize.objects.filter(size=order_data['size']).first()
+    #     sub_type = SubType.objects.filter(
+    #         name=order_data['food_item']).first()
+    #     sub = SubOrder(foodsize=size, food_type=sub_type,
+    #                    user=request.user.username, status='Draft')
+    #     sub.save()
+    #     if 'topping' in order_data:
+    #         toppings = SubTopping.objects.filter(
+    #             name__in=order_data.getlist('topping'))
+    #         sub.toppings.set(toppings)
+    #     else:
+    #         sub.save()
+
+    # elif 'Platters' in order_data['food_type']:
+    #     size = FoodSize.objects.filter(size=order_data['size']).first()
+    #     food_type = models[order_data['food_type']][0].objects.filter(
+    #         name=order_data['food_item']).first()
+    #     food = models[order_data['food_type']][1](food_type=food_type,
+    #                        user=request.user.username, status='Draft', foodsize=size)
+    #     food.save()
+
+    # else:
+    #     food_type = models[order_data['food_type']][0].objects.filter(
+    #         name=order_data['food_item']).first()
+    #     food = models[order_data['food_type']][1](food_type=food_type,
+    #                        user=request.user.username, status='Draft')
+    #     food.save()
+
 
 
 def get_checkout_data():
