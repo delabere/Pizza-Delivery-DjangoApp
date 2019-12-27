@@ -13,11 +13,11 @@
 {% for food_type, items in menu.items %}
 
 <div class="container-flex">
-  <h1>{{ food_type }}</h1>
   <div class="row">
     <div class="col-1">
     </div>
     <div class="col-4">
+  <h1>{{ food_type }}</h1>
       <div id="accordion">
         {% for item in items %}
         <div class="card">
@@ -40,7 +40,7 @@
                     {% if '1 Topping' in item %}
                     <select class="mr-sm-2" id="inlineFormCustomSelect" name="size">
                     {% comment %} TODO: make size parameter consistent {% endcomment %}
-                      <option disabled selected value> -- select a size -- </option>
+                      <option disabled selected value>Size...</option>
                       <option value="Small">Small</option>
                       <option value="Large">Large</option>
                     </select>
@@ -124,7 +124,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-2">
+    <div class="col-1">
     </div>
     <div class="col-5">
     {% if forloop.first %}
@@ -184,5 +184,6 @@
     </div>
   </div>
 </div>
+<br><br>
 {% endfor %}
 {% endblock %}
