@@ -64,11 +64,11 @@ def index(request):
         "basket_total": basket_total,
         "checkout": checkout_data,
         "menu": {
-            'Pizzas': [i for i in Price.objects.all() if i.food_type == 'Pizza'],
-            'Pastas': [i for i in Price.objects.all() if i.food_type == 'Pasta'],
-            'Salads': [i for i in Price.objects.all() if i.food_type == 'Salad'],
-            'Platters': [i for i in Price.objects.all() if i.food_type == 'Platter'],
-            'Subs': [i for i in Price.objects.all() if i.food_type == 'Sub'],
+            'Pizzas': [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],
+            'Pastas': [str(i) for i in Price.objects.all() if i.food_type == 'Pasta'],
+            'Salads': [str(i) for i in Price.objects.all() if i.food_type == 'Salad'],
+            'Platters': [str(i) for i in Price.objects.all() if i.food_type == 'Platter'],
+            'Subs': [str(i) for i in Price.objects.all() if i.food_type == 'Sub'],
         },
         "pizza_toppings": PizzaTopping.objects.all(),
         "sub_toppings": SubTopping.objects.all(),
@@ -110,15 +110,14 @@ def order_to_basket(order_data, request):
 
     # if pizza or sub then add any toppings
     if 'topping' in order_data:
-        toppings = models[order_data['food_type']][2].objects.filter(
-            name__in=order_data.getlist('topping'))
+        toppings = models[order_data['food_type']][2].objects.filter(name__in=order_data.getlist('topping'))
         food.toppings.set(toppings)
+        food.save()
     else:
         if order_data['food_type'] == 'Pizzas':
             food.reg_pizza_type = 'Special'
         food.save()
 
-    print('test')
 
     # if 'Pizzas' in order_data['food_type']:
     #     size = FoodSize.objects.filter(size=order_data['size']).first()
