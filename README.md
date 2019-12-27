@@ -12,7 +12,7 @@ If you are an admin user you are able to add new items to the site through the D
 ![Image description](img/pizza_registration.png)
 
 ## Menu and ordering!
-![Image description](img/pizza_store.png)
+![Image description](img/Pizza_store.png)
 
 ## Confirm your basket and checkout
 ![Image description](img/pizza_store_confirmation.png)
