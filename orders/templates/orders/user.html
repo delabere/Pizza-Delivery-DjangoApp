@@ -172,13 +172,10 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        
                         <form method="post" action="{% url 'checkout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Submit order</button>
-
+                        <button type="submit" name="user_form" class="btn btn-primary">Submit order</button>
                         </form>
-
                       </div>
                     </div>
                   </div>

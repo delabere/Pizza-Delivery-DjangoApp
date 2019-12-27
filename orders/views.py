@@ -9,6 +9,14 @@ from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, 
 
 
 def checkout_view(request):
+    if 'admin_form' in request.POST:
+        model = f"{request.POST['food_type'][:-1]}Order"
+        model = globals()[model]
+
+        order = model.objects.filter(pk=request.POST['id'])
+        order.delete()
+
+
     models = [PizzaOrder,
               SubOrder,
               PastaOrder,
@@ -86,19 +94,20 @@ def index(request):
     if not request.user.is_authenticated:
         return render(request, "orders/fancy_login.html", {"message": None})
 
+# TODO: remove list()'s here
     basket_data = {
         'Pizzas': list(PizzaOrder.objects.filter(user=request.user.username, status='Draft')),
         'Subs': list(SubOrder.objects.filter(user=request.user.username, status='Draft')),
         'Pastas': list(PastaOrder.objects.filter(user=request.user.username, status='Draft')),
         'Salads': list(SaladOrder.objects.filter(user=request.user.username, status='Draft')),
-        'Platter': list(PlatterOrder.objects.filter(user=request.user.username, status='Draft'))
+        'Platters': list(PlatterOrder.objects.filter(user=request.user.username, status='Draft'))
     }
     checkout_data = {
-        'Pizzas': list(PizzaOrder.objects.filter(status='Ordered')),
-        'Subs': list(SubOrder.objects.filter(status='Ordered')),
-        'Pastas': list(PastaOrder.objects.filter(status='Ordered')),
-        'Salads': list(SaladOrder.objects.filter(status='Ordered')),
-        'Platter': list(PlatterOrder.objects.filter(status='Ordered'))
+        'Pizzas': [(i.id, i) for i in PizzaOrder.objects.filter(status='Ordered')],
+        'Subs': [(i.id, i) for i in SubOrder.objects.filter(status='Ordered')],
+        'Pastas': [(i.id, i) for i in PastaOrder.objects.filter(status='Ordered')],
+        'Salads': [(i.id, i) for i in SaladOrder.objects.filter(status='Ordered')],
+        'Platters': [(i.id, i) for i in PlatterOrder.objects.filter(status='Ordered')]
     }
 
     context = {

@@ -17,10 +17,13 @@
             <ul class="list-group">
                 <li class="list-group-item active">Items:</li>
                 {% for key, items in checkout.items  %}
-                    {% for item in items %}
-                    <form method="post" action="">
+                    {% for id, item in items %}
+                    <form method="post" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="food_type" value="{{ key }}">
+                    <input type="hidden" name="id" value="{{ id }}">
                     <li class="list-group-item">{{key}}: {{item}}
-                        <button type="submit" class="btn btn-primary">Mark complete</button>
+                        <button type="submit" name="admin_form" class="btn btn-primary">Mark complete</button>
                         </li>
                     </form>
                   {% endfor %}
