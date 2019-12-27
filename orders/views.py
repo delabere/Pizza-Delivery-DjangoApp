@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder, SubOrder, SubType, PastaOrder, PastaType, PlatterOrder, PlatterType, SaladOrder, SaladType
 
 
-def checkout_view(request):
+def order_status(request):
     if 'admin_form' in request.POST:
         model = f"{request.POST['food_type'][:-1]}Order"
         model = globals()[model]
@@ -30,7 +30,7 @@ def checkout_view(request):
             item.save()
 
     return HttpResponseRedirect(reverse("index"))
-    
+
 # TODO: add docstrings to all methods
 
 
@@ -96,23 +96,28 @@ def index(request):
 
 # TODO: remove list()'s here
     basket_data = {
-        'Pizzas': list(PizzaOrder.objects.filter(user=request.user.username, status='Draft')),
-        'Subs': list(SubOrder.objects.filter(user=request.user.username, status='Draft')),
-        'Pastas': list(PastaOrder.objects.filter(user=request.user.username, status='Draft')),
-        'Salads': list(SaladOrder.objects.filter(user=request.user.username, status='Draft')),
-        'Platters': list(PlatterOrder.objects.filter(user=request.user.username, status='Draft'))
+        'Pizzas': [(i.get_price, i) for i in PizzaOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Subs': [(i.get_price, i) for i in SubOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Pastas': [(i.get_price, i) for i in PastaOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Salads': [(i.get_price, i) for i in SaladOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Platters': [(i.get_price, i) for i in PlatterOrder.objects.filter(user=request.user.username, status='Draft')],
     }
+
+    basket_amounts = [i for i in basket_data.values()][0]
+    basket_total = sum([i[0] for i in basket_amounts])
+
     checkout_data = {
-        'Pizzas': [(i.id, i) for i in PizzaOrder.objects.filter(status='Ordered')],
-        'Subs': [(i.id, i) for i in SubOrder.objects.filter(status='Ordered')],
-        'Pastas': [(i.id, i) for i in PastaOrder.objects.filter(status='Ordered')],
-        'Salads': [(i.id, i) for i in SaladOrder.objects.filter(status='Ordered')],
-        'Platters': [(i.id, i) for i in PlatterOrder.objects.filter(status='Ordered')]
+        'Pizzas': [(i.id, i.user, i) for i in PizzaOrder.objects.filter(status='Ordered')],
+        'Subs': [(i.id, i.user, i) for i in SubOrder.objects.filter(status='Ordered')],
+        'Pastas': [(i.id, i.user, i) for i in PastaOrder.objects.filter(status='Ordered')],
+        'Salads': [(i.id, i.user, i) for i in SaladOrder.objects.filter(status='Ordered')],
+        'Platters': [(i.id, i.user, i) for i in PlatterOrder.objects.filter(status='Ordered')]
     }
 
     context = {
         "user": request.user,
         "basket": basket_data,
+        "basket_total": basket_total,
         "checkout": checkout_data,
         "menu": {
             'Pizzas': [str(i) for i in Price.objects.all() if i.food_type == 'Pizza'],

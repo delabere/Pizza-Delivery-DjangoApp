@@ -5,12 +5,6 @@
 <h1>Hello, {{ user.first_name }}</h1>
 <ul>
   <li>Currently logged in as: {{ user.username }}</li>
-  {% comment %} <li>Sessions look like: {{ session.orders_item }}</li> {% endcomment %}
- <ul>
-  {% for key, item in basket.items  %}
-    <li>{{key}}: {{item}}</li>
-  {% endfor %}
- </ul>
   <li><a href="{% url 'logout' %}">Logout</a></li>
 </ul>
 
@@ -146,7 +140,7 @@
               <ul class="list-group">
                 <li class="list-group-item active">Items:</li>
                 {% for key, items in basket.items  %}
-                    {% for item in items %}
+                    {% for id, item in items %}
                     <li class="list-group-item">{{key}}: {{item}}</li>
                   {% endfor %}
                 {% endfor %}
@@ -168,11 +162,11 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        this is where the total for the order and summary will display!
+                        Are you sure you want to checkout items with a total value of: £{{basket_total}}?
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <form method="post" action="{% url 'checkout' %}">
+                        <form method="post" action="{% url 'order_status' %}">
                         {% csrf_token %}
                         <button type="submit" name="user_form" class="btn btn-primary">Submit order</button>
                         </form>

@@ -4,9 +4,8 @@
 {% block content %}
 <h1>Hello admin, {{ user.first_name }} here are your orders:</h1>
 <ul>
-    <li>Currently logged in as: {{ user.username }}</li>
-    <li><a href="{% url 'logout' %}">Logout</a></li>
-
+  <li>Currently logged in as: {{ user.username }}</li>
+  <li><a href="{% url 'logout' %}">Logout</a></li>
 </ul>
 <br>
 
@@ -14,21 +13,21 @@
 
 <h1>Orders:</h1>
 
-            <ul class="list-group">
-                <li class="list-group-item active">Items:</li>
-                {% for key, items in checkout.items  %}
-                    {% for id, item in items %}
-                    <form method="post" action="{% url 'checkout' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="food_type" value="{{ key }}">
-                    <input type="hidden" name="id" value="{{ id }}">
-                    <li class="list-group-item">{{key}}: {{item}}
-                        <button type="submit" name="admin_form" class="btn btn-primary">Mark complete</button>
-                        </li>
-                    </form>
-                  {% endfor %}
-                {% endfor %}
-              </ul>
+<ul class="list-group">
+  <li class="list-group-item active">Items:</li>
+  {% for key, items in checkout.items  %}
+      {% for id, user, item in items %}
+      <form method="post" action="{% url 'order_status' %}">
+      {% csrf_token %}
+      <input type="hidden" name="food_type" value="{{ key }}">
+      <input type="hidden" name="id" value="{{ id }}">
+      <li class="list-group-item">{{key}}: {{item}} (ordered by: {{ user }})
+        <button type="submit" name="admin_form" class="btn btn-primary">Mark complete</button>
+        </li>
+      </form>
+    {% endfor %}
+  {% endfor %}
+</ul>
 
 
 {% endblock %}
