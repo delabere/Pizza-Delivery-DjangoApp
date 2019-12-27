@@ -8,43 +8,14 @@ from django.db import IntegrityError
 from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, PizzaOrder, SubOrder, SubType, PastaOrder, PastaType, PlatterOrder, PlatterType, SaladOrder, SaladType
 
 
-def order_status(request):
-    """
-    for user: marks all basket items as 'Ordered'
-    for admin: marks selected order as 'Complete'
-    """
-
-    if 'admin_form' in request.POST:
-        model = f"{request.POST['food_type'][:-1]}Order"
-        model = globals()[model]
-
-        order = model.objects.filter(pk=request.POST['id']).first()
-        order.status = 'Complete'
-        order.save()
-
-# TODO: is there a better way to do this?
-    models = [PizzaOrder,
-              SubOrder,
-              PastaOrder,
-              SaladOrder,
-              PlatterOrder
-              ]
-
-    for model in models:
-        for item in model.objects.filter(user=request.user.username, status='Draft').all():
-            item.status = 'Ordered'
-            item.save()
-
-    return HttpResponseRedirect(reverse("index"))
-
-# TODO: add docstrings to all methods
 
 
 def index(request):
     """
     Main view:
     If a user is authenticated then this controls menu and ordering.
-    If an admin is authenticated then this controls the showing of orders and marking orders complete
+    If an admin is authenticated then this controls the showing of orders and marking orders
+    complete
     """
 
     if not request.user.is_authenticated:
@@ -55,8 +26,8 @@ def index(request):
         order_data = request.POST
         order_to_basket(order_data, request)
 
-    basket_data, basket_total = get_basket_data(request)
-    checkout_data = get_checkout_data()
+    basket_data, basket_total = get_basket_contents(request)
+    checkout_data = get_processed_orders()
 
     context = {
         "user": request.user,
@@ -79,116 +50,6 @@ def index(request):
         return render(request, "orders/admin.html", context)
     else:
         return render(request, "orders/user.html", context)
-
-
-def order_to_basket(order_data, request):
-    """creates a data entry for a customers order which can then be displayed in the basket"""
-    models = {
-        'Pastas': (PastaType, PastaOrder),
-        'Salads': (SaladType, SaladOrder),
-        'Platters': (PlatterType, PlatterOrder),
-        'Pizzas': (PizzaType, PizzaOrder, PizzaTopping),
-        'Subs': (SubType, SubOrder, SubTopping),
-    }
-
-    # get all the required query data from order
-    food_type = models[order_data['food_type']][0].objects.filter(
-        name=order_data['food_item']).first()
-
-    if order_data['food_type'] in ['Pizzas', 'Subs', 'Platters']:
-        if order_data['food_type'] == 'Pizzas':
-            food_type = PizzaType.objects.filter(
-                name=order_data['food_item'].split()[0]).first()
-        size = FoodSize.objects.filter(size=order_data['size']).first()
-        food = models[order_data['food_type']][1](food_type=food_type,
-                            user=request.user.username, status='Draft', foodsize=size)
-    else:
-        food = models[order_data['food_type']][1](food_type=food_type,
-                            user=request.user.username, status='Draft')
-
-    food.save()
-
-    # if pizza or sub then add any toppings
-    if 'topping' in order_data:
-        toppings = models[order_data['food_type']][2].objects.filter(name__in=order_data.getlist('topping'))
-        food.toppings.set(toppings)
-        food.save()
-    else:
-        if order_data['food_type'] == 'Pizzas':
-            food.reg_pizza_type = 'Special'
-        food.save()
-
-
-    # if 'Pizzas' in order_data['food_type']:
-    #     size = FoodSize.objects.filter(size=order_data['size']).first()
-    #     pizza_type = PizzaType.objects.filter(
-    #         name=order_data['food_item'].split()[0]).first()
-    #     pizza = PizzaOrder(foodsize=size, food_type=pizza_type,
-    #                        user=request.user.username, status='Draft')
-    #     pizza.save()
-    #     if 'topping' in order_data:
-    #         toppings = PizzaTopping.objects.filter(
-    #             name__in=order_data.getlist('topping'))
-    #         pizza.toppings.set(toppings)
-    #     else:
-    #         pizza.reg_pizza_type = 'Special'
-    #         pizza.save()
-
-    # elif 'Subs' in order_data['food_type']:
-    #     size = FoodSize.objects.filter(size=order_data['size']).first()
-    #     sub_type = SubType.objects.filter(
-    #         name=order_data['food_item']).first()
-    #     sub = SubOrder(foodsize=size, food_type=sub_type,
-    #                    user=request.user.username, status='Draft')
-    #     sub.save()
-    #     if 'topping' in order_data:
-    #         toppings = SubTopping.objects.filter(
-    #             name__in=order_data.getlist('topping'))
-    #         sub.toppings.set(toppings)
-    #     else:
-    #         sub.save()
-
-    # elif 'Platters' in order_data['food_type']:
-    #     size = FoodSize.objects.filter(size=order_data['size']).first()
-    #     food_type = models[order_data['food_type']][0].objects.filter(
-    #         name=order_data['food_item']).first()
-    #     food = models[order_data['food_type']][1](food_type=food_type,
-    #                        user=request.user.username, status='Draft', foodsize=size)
-    #     food.save()
-
-    # else:
-    #     food_type = models[order_data['food_type']][0].objects.filter(
-    #         name=order_data['food_item']).first()
-    #     food = models[order_data['food_type']][1](food_type=food_type,
-    #                        user=request.user.username, status='Draft')
-    #     food.save()
-
-
-
-def get_checkout_data():
-    checkout_data = {
-        'Pizzas': [(i.id, i.user, i) for i in PizzaOrder.objects.filter(status='Ordered')],
-        'Subs': [(i.id, i.user, i) for i in SubOrder.objects.filter(status='Ordered')],
-        'Pastas': [(i.id, i.user, i) for i in PastaOrder.objects.filter(status='Ordered')],
-        'Salads': [(i.id, i.user, i) for i in SaladOrder.objects.filter(status='Ordered')],
-        'Platters': [(i.id, i.user, i) for i in PlatterOrder.objects.filter(status='Ordered')]
-    }
-    return checkout_data
-
-
-def get_basket_data(request):
-    basket_data = {
-        'Pizzas': [(i.get_price, i) for i in PizzaOrder.objects.filter(user=request.user.username, status='Draft')],
-        'Subs': [(i.get_price, i) for i in SubOrder.objects.filter(user=request.user.username, status='Draft')],
-        'Pastas': [(i.get_price, i) for i in PastaOrder.objects.filter(user=request.user.username, status='Draft')],
-        'Salads': [(i.get_price, i) for i in SaladOrder.objects.filter(user=request.user.username, status='Draft')],
-        'Platters': [(i.get_price, i) for i in PlatterOrder.objects.filter(user=request.user.username, status='Draft')],
-    }
-
-    basket_amounts = [i for i in basket_data.values()][0]
-    basket_total = sum([i[0] for i in basket_amounts])
-    return basket_data, basket_total
-
 
 def login_view(request):
     """allows a user to log in"""
@@ -235,3 +96,97 @@ def register_view(request):
         else:
             return render(request, "orders/fancy_register.html", {"message": "Invalid credentials."})
     return render(request, "orders/fancy_register.html", {"message": None})
+
+
+def order_status(request):
+    """
+    for user: marks all basket items as 'Ordered'
+    for admin: marks selected order as 'Complete'
+    """
+
+    if 'admin_form' in request.POST:
+        model = f"{request.POST['food_type'][:-1]}Order"
+        model = globals()[model]
+
+        order = model.objects.filter(pk=request.POST['id']).first()
+        order.status = 'Complete'
+        order.save()
+
+    models = [PizzaOrder,
+              SubOrder,
+              PastaOrder,
+              SaladOrder,
+              PlatterOrder
+              ]
+
+    for model in models:
+        for item in model.objects.filter(user=request.user.username, status='Draft').all():
+            item.status = 'Ordered'
+            item.save()
+
+    return HttpResponseRedirect(reverse("index"))
+
+
+def order_to_basket(order_data, request):
+    """creates a data entry for a customers order which can then be displayed in the basket"""
+    models = {
+        'Pastas': (PastaType, PastaOrder),
+        'Salads': (SaladType, SaladOrder),
+        'Platters': (PlatterType, PlatterOrder),
+        'Pizzas': (PizzaType, PizzaOrder, PizzaTopping),
+        'Subs': (SubType, SubOrder, SubTopping),
+    }
+
+    # get all the required query data from order
+    food_type = models[order_data['food_type']][0].objects.filter(
+        name=order_data['food_item']).first()
+
+    if order_data['food_type'] in ['Pizzas', 'Subs', 'Platters']:
+        if order_data['food_type'] == 'Pizzas':
+            food_type = PizzaType.objects.filter(
+                name=order_data['food_item'].split()[0]).first()
+        size = FoodSize.objects.filter(size=order_data['size']).first()
+        food = models[order_data['food_type']][1](food_type=food_type,
+         user=request.user.username, status='Draft', foodsize=size)
+    else:
+        food = models[order_data['food_type']][1](food_type=food_type,
+         user=request.user.username, status='Draft')
+    food.save()
+
+    # if pizza or sub then add any toppings
+    if 'topping' in order_data:
+        toppings = models[order_data['food_type']][2].objects.filter(name__in=order_data.getlist('topping'))
+        food.toppings.set(toppings)
+        food.save()
+    else:
+        if order_data['food_type'] == 'Pizzas':
+            food.reg_pizza_type = 'Special'
+        food.save()
+
+
+def get_processed_orders():
+    """get data for all orders processing"""
+    checkout_data = {
+        'Pizzas': [(i.id, i.user, i) for i in PizzaOrder.objects.filter(status='Ordered')],
+        'Subs': [(i.id, i.user, i) for i in SubOrder.objects.filter(status='Ordered')],
+        'Pastas': [(i.id, i.user, i) for i in PastaOrder.objects.filter(status='Ordered')],
+        'Salads': [(i.id, i.user, i) for i in SaladOrder.objects.filter(status='Ordered')],
+        'Platters': [(i.id, i.user, i) for i in PlatterOrder.objects.filter(status='Ordered')]
+    }
+    return checkout_data
+
+
+def get_basket_contents(request):
+    """get all data for orders user has added to their basket"""
+    basket_data = {
+        'Pizzas': [(i.get_price, i) for i in PizzaOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Subs': [(i.get_price, i) for i in SubOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Pastas': [(i.get_price, i) for i in PastaOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Salads': [(i.get_price, i) for i in SaladOrder.objects.filter(user=request.user.username, status='Draft')],
+        'Platters': [(i.get_price, i) for i in PlatterOrder.objects.filter(user=request.user.username, status='Draft')],
+    }
+
+    basket_amounts = [i for i in basket_data.values()][0]
+    basket_total = sum([i[0] for i in basket_amounts])
+    return basket_data, basket_total
+
