@@ -5,3 +5,9 @@ This is an example pizza shop website which allows you do order custom pizzas, s
 You can intuitively add items to your basket and proceed through to checkout.
 
 If you are an admin you are able to add new items to the site as well as view and mark orders complete from the built-in admin page.
+
+## Login Screen on Desktop
+![Image description](img/pizza_admin.png)
+
+## Book info on Mobile
+![Image description](Over-Booked-mobile.png)
