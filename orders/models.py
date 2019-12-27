@@ -1,15 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-# TODO: add pricing information to all options somehow
-# abstract away the sizes and toppings and have pizza/subs inherit those like
-# pizza does currently with foodsize
-
-# Create your models here
-# Hierarchy:
-#   Food_Size
-#   PizzaType // SubType
-#   PizzaToppings // SubToppings
-#   Pizza  // Pasta  //  Sub  //  Platter
 
 
 class FoodSize(models.Model):
@@ -147,7 +137,7 @@ class SubOrder(models.Model):
 
     def __str__(self):
         toppings = ", ".join(str(seg) for seg in self.toppings.all())
-        return f'{self.foodsize} {self.food_type} Sub with {toppings} Price: {self.get_price}' # TODO: make 'with' dynamic
+        return f'{self.foodsize} {self.food_type} Sub with {toppings} Price: {self.get_price}'
 
 
 class PlatterOrder(models.Model):
