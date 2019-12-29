@@ -9,7 +9,6 @@ from orders.models import Price, PizzaTopping, SubTopping, FoodSize, PizzaType, 
 
 def index(request):
     """
-    Main view:
     If a user is authenticated then this controls menu and ordering.
     If an admin is authenticated then this controls the showing of orders and marking orders
     complete
@@ -49,7 +48,7 @@ def index(request):
         return render(request, "orders/user.html", context)
 
 def login_view(request):
-    """allows a user to log in"""
+    """allows a user to login"""
     username = request.POST["username"]
     password = request.POST["password"]
     user = authenticate(request, username=username, password=password)
@@ -97,8 +96,8 @@ def register_view(request):
 
 def order_status(request):
     """
-    for user: marks all basket items as 'Ordered'
-    for admin: marks selected order as 'Complete'
+    if user: marks all basket items as 'Ordered'
+    if admin: marks selected order as 'Complete'
     """
 
     if 'admin_form' in request.POST:
@@ -125,7 +124,7 @@ def order_status(request):
 
 
 def order_to_basket(order_data, request):
-    """creates a data entry for a customers order which can then be displayed in the basket"""
+    """creates a 'draft' order entry in the database"""
     models = {
         'Pastas': (PastaType, PastaOrder),
         'Salads': (SaladType, SaladOrder),
@@ -162,7 +161,7 @@ def order_to_basket(order_data, request):
 
 
 def get_processed_orders():
-    """get data for all orders processing"""
+    """retrieve all 'ordered' orders"""
     checkout_data = {
         'Pizzas': [(i.id, i.user, i) for i in PizzaOrder.objects.filter(status='Ordered')],
         'Subs': [(i.id, i.user, i) for i in SubOrder.objects.filter(status='Ordered')],
@@ -174,7 +173,7 @@ def get_processed_orders():
 
 
 def get_basket_contents(request):
-    """get all data for orders user has added to their basket"""
+    """get basket orders for current user"""
     basket_data = {
         'Pizzas': [(i.get_price, i) for i in PizzaOrder.objects.filter(user=request.user.username, status='Draft')],
         'Subs': [(i.get_price, i) for i in SubOrder.objects.filter(user=request.user.username, status='Draft')],
@@ -186,4 +185,3 @@ def get_basket_contents(request):
     basket_amounts = [i for i in basket_data.values()][0]
     basket_total = sum([i[0] for i in basket_amounts])
     return basket_data, basket_total
-
