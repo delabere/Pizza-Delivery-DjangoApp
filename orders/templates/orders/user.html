@@ -4,14 +4,15 @@
 {% comment %} TODO: clean all this up {% endcomment %}
 <br>
 
-<div class="container">
-<div class="row">
-<div class="col">
+<!-- <div class="container"> -->
+<div class="row header-row">
+<div class="col-2">
   <div class="container">
     <img src="{% static "orders/pizza_logo.jpg" %}" class="brand_logo" alt="Logo">
   </div>
 </div>
-<div class="col">
+<div class="col-5 my-auto">
+  <div class="container welcome">
   <h1>Hello, {{ user.first_name }}</h1>
   <ul>
     <li>Currently logged in as: {{ user.username }}</li>
@@ -20,6 +21,7 @@
 </div>
 </div>
 </div>
+<!-- </div> -->
 
 
 

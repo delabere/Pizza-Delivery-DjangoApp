@@ -13,6 +13,15 @@ body li, html li {
   color: #eae5db;
 }
 
+.header-row {
+  margin-left: 2.5em !important;
+}
+
+.welcome {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .header {
   margin-left: 5%;
   margin-bottom: 2em;
