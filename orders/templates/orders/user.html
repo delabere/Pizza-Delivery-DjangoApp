@@ -2,15 +2,32 @@
 {% load static %}
 
 {% comment %} TODO: clean all this up {% endcomment %}
-<div class="container header">
-  <br>
+<br>
+
+<div class="container">
+<div class="row">
+<div class="col">
+  <div class="container">
+    <img src="{% static "orders/pizza_logo.jpg" %}" class="brand_logo" alt="Logo">
+  </div>
+</div>
+<div class="col">
   <h1>Hello, {{ user.first_name }}</h1>
   <ul>
     <li>Currently logged in as: {{ user.username }}</li>
     <li><a href="{% url 'logout' %}">Logout</a></li>
   </ul>
-  <h1>On todays menu...</h1>
 </div>
+</div>
+</div>
+
+
+
+  <div class="container header">
+  <h1>On todays menu...</h1>
+  </div>
+
+
 {% for food_type, items in menu.items %}
 
 <div class="container-flex">
