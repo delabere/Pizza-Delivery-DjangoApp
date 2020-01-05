@@ -1,48 +1,51 @@
+$base-color: #1d4648;
+$text-color-dark: black;
+$text-color-light: #eae5db;
+$content-color: #0f4144;
+$highlight-color: #22585a;
+
+
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #1d4648 !important;
-}
-
-body h1, html h1 {
-  color: #eae5db;
-}
-
-body li, html li {
-  color: #eae5db;
+  background: $base-color !important;
+  h1{
+    color: $text-color-light;
+  }
+  li{
+    color: $text-color-light;
+  }
 }
 
 .card {
-  background: #0f4144;
+  background: $content-color;
   padding: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 5px;
+  .card-header{
+    background-color: $highlight-color;
+    color: $text-color-light;
+    .btn-link{
+      color: $text-color-light;
+      border-color: $highlight-color;
+    }
+  }
 }
 
-.card .card-header {
-  background-color: #22585a;
-  color: #eae5db;
-}
-
-.card .card-header .btn-link {
-  color: #eae5db;
-  border-color: #22585a;
-}
-
-.btn-primary {
-  background-color: #22585a;
-  border-color: #eae5db;
+.btn-primary{
+  background-color: $highlight-color;
+  border-color: $text-color-light;
 }
 
 .list-group-item.active {
-  background-color: #22585a;
-  border-color: #22585a;
+  background-color: $highlight-color;
+  border-color: $highlight-color;
 }
 
-.list-group-item {
+.list-group-item{
   color: black;
 }
 
@@ -53,16 +56,9 @@ body li, html li {
   margin-bottom: auto;
   background: #f39c12;
   position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  justify-content: center;
+  flex-direction: column;
   padding: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -84,6 +80,7 @@ body li, html li {
 .brand_logo {
   height: 150px;
   width: 150px;
+
   /* border-radius: 50%; */
   /* border: 2px solid white; */
 }
@@ -96,12 +93,11 @@ body li, html li {
   width: 100%;
   background: #c0392b !important;
   color: white !important;
-}
 
-.login_btn:focus {
-  -webkit-box-shadow: none !important;
-          box-shadow: none !important;
-  outline: 0px !important;
+  &:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+  }
 }
 
 .login_container {
@@ -116,12 +112,10 @@ body li, html li {
 }
 
 .input_user, .input_pass:focus {
-  -webkit-box-shadow: none !important;
-          box-shadow: none !important;
+  box-shadow: none !important;
   outline: 0px !important;
 }
 
 .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
   background-color: #c0392b !important;
 }
-/*# sourceMappingURL=style.css.map */
