@@ -13,6 +13,16 @@ body li, html li {
   color: #eae5db;
 }
 
+a {
+  color: #ffcc59;
+}
+
+.logout {
+  text-align: right;
+  right: 3em;
+  font-size: xx-large;
+}
+
 .header-row {
   margin-left: 2.5em !important;
 }
@@ -65,7 +75,7 @@ body li, html li {
   width: 350px;
   margin-top: auto;
   margin-bottom: auto;
-  background: #f39c12;
+  background: #22585a;
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -84,13 +94,21 @@ body li, html li {
   border-radius: 5px;
 }
 
+.user_card .justify-content-center {
+  color: white;
+}
+
+.custom-control-label {
+  color: white;
+}
+
 .brand_logo_container {
   position: absolute;
   height: 170px;
   width: 170px;
   top: -75px;
   border-radius: 50%;
-  background: #60a3bc;
+  background: #1d4648;
   padding: 10px;
   text-align: center;
 }

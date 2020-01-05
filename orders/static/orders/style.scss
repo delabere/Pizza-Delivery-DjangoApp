@@ -18,6 +18,16 @@ body, html {
   }
 }
 
+a{
+  color: #ffcc59;;
+}
+
+.logout{
+  text-align: right;
+  right: 3em;
+  font-size: xx-large;
+}
+
 .header-row{
   margin-left: 2.5em !important;
 }
@@ -68,7 +78,7 @@ body, html {
   width: 350px;
   margin-top: auto;
   margin-bottom: auto;
-  background: #f39c12;
+  background: $highlight-color;
   position: relative;
   display: flex;
   justify-content: center;
@@ -78,6 +88,13 @@ body, html {
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 5px;
+  .justify-content-center {
+    color: white;
+}
+}
+
+.custom-control-label{
+  color: white;
 }
 
 .brand_logo_container {
@@ -86,7 +103,7 @@ body, html {
   width: 170px;
   top: -75px;
   border-radius: 50%;
-  background: #60a3bc;
+  background: $base-color;
   padding: 10px;
   text-align: center;
 }

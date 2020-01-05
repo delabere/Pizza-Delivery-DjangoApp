@@ -12,23 +12,14 @@
   </div>
 </div>
 <div class="col-5 my-auto">
-  <div class="container welcome">
   <h1>Hello, {{ user.first_name }}</h1>
-  <ul>
-    <li>Currently logged in as: {{ user.username }}</li>
-    <li><a href="{% url 'logout' %}">Logout</a></li>
-  </ul>
+</div>
+<div class="col-5 my-auto logout">
+  <a href="{% url 'logout' %}">Logout</a>
 </div>
 </div>
-</div>
-<!-- </div> -->
 
-
-
-  <div class="container header">
-  <h1>On todays menu...</h1>
-  </div>
-
+<br>
 
 {% for food_type, items in menu.items %}
 
@@ -37,7 +28,12 @@
     <div class="col-1">
     </div>
     <div class="col-4">
+{% if forloop.first %}
+  <h1>On todays menu...</h1>
   <h1>{{ food_type }}</h1>
+{% else %}
+  <h1>{{ food_type }}</h1>
+{% endif%}
       <div id="accordion">
         {% for item in items %}
         <div class="card">
