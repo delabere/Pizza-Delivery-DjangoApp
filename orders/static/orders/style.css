@@ -13,6 +13,11 @@ body li, html li {
   color: #eae5db;
 }
 
+.header {
+  margin-left: 5%;
+  margin-bottom: 2em;
+}
+
 .card {
   background: #0f4144;
   padding: 10px;

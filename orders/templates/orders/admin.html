@@ -2,17 +2,21 @@
 {% load static %}
 
 {% block content %}
+<div class="container">
+<br>
 <h1>Hello admin, {{ user.first_name }} here are your orders:</h1>
 <ul>
   <li>Currently logged in as: {{ user.username }}</li>
   <li><a href="{% url 'logout' %}">Logout</a></li>
 </ul>
 <br>
+</div>
 
 {% comment %} TODO: group orders by user and add mark complete functionality {% endcomment %}
 
-<h1>Orders:</h1>
 
+<div class="container">
+<h1>Orders:</h1>
 <ul class="list-group">
   <li class="list-group-item active">Items:</li>
   {% for key, items in checkout.items  %}
@@ -28,6 +32,6 @@
     {% endfor %}
   {% endfor %}
 </ul>
-
+</div>
 
 {% endblock %}

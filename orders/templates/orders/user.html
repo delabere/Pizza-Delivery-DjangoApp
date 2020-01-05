@@ -2,13 +2,15 @@
 {% load static %}
 
 {% comment %} TODO: clean all this up {% endcomment %}
-<h1>Hello, {{ user.first_name }}</h1>
-<ul>
-  <li>Currently logged in as: {{ user.username }}</li>
-  <li><a href="{% url 'logout' %}">Logout</a></li>
-</ul>
-<h1>On todays menu...</h1>
-
+<div class="container header">
+  <br>
+  <h1>Hello, {{ user.first_name }}</h1>
+  <ul>
+    <li>Currently logged in as: {{ user.username }}</li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+  </ul>
+  <h1>On todays menu...</h1>
+</div>
 {% for food_type, items in menu.items %}
 
 <div class="container-flex">
