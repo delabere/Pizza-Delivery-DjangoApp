@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  gifchat:
+    build: ./jackspizza
+    volumes:
+      - ./jackspizza:/usr/src/app
+    ports:
+      - 80:80
